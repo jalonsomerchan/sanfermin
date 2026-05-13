@@ -1,0 +1,74 @@
+import { GAME_CONFIG } from '../config/gameConfig.js';
+
+export class Player {
+  constructor() {
+    this.reset();
+  }
+
+  reset() {
+    this.x = GAME_CONFIG.player.x;
+    this.width = GAME_CONFIG.player.width;
+    this.height = GAME_CONFIG.player.height;
+    this.y = GAME_CONFIG.world.groundY - this.height;
+    this.velocityY = 0;
+    this.isGrounded = true;
+    this.coyoteTimer = 0;
+    this.animationTime = 0;
+  }
+
+  update(deltaTime, input) {
+    if (this.isGrounded) {
+      this.coyoteTimer = GAME_CONFIG.player.coyoteTime;
+    } else {
+      this.coyoteTimer -= deltaTime;
+    }
+
+    if (input.consumeJump() && this.coyoteTimer > 0) {
+      this.velocityY = GAME_CONFIG.player.jumpVelocity;
+      this.isGrounded = false;
+      this.coyoteTimer = 0;
+    }
+
+    this.velocityY += GAME_CONFIG.world.gravity * deltaTime;
+    this.y += this.velocityY * deltaTime;
+
+    const floorY = GAME_CONFIG.world.groundY - this.height;
+    if (this.y >= floorY) {
+      this.y = floorY;
+      this.velocityY = 0;
+      this.isGrounded = true;
+    }
+
+    this.animationTime += deltaTime;
+  }
+
+  bounce() {
+    this.velocityY = GAME_CONFIG.player.stompBounceVelocity;
+    this.isGrounded = false;
+  }
+
+  get frame() {
+    const frames = 4;
+    const duration = GAME_CONFIG.player.frameDuration;
+
+    if (!this.isGrounded) {
+      if (this.velocityY < -260) return 1;
+      if (this.velocityY < 160) return 2;
+      return 3;
+    }
+
+    return Math.floor(this.animationTime / duration) % frames;
+  }
+
+  get bounds() {
+    const inset = GAME_CONFIG.player.collisionInset;
+
+    return {
+      x: this.x + inset.x,
+      y: this.y + inset.y,
+      width: this.width - inset.x * 2,
+      height: this.height - inset.y * 2,
+      bottom: this.y + this.height - inset.y,
+    };
+  }
+}

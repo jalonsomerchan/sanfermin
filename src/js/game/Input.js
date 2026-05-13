@@ -1,34 +1,53 @@
 export class Input {
   #keys = new Set();
-  #pointer = null;
+  #pressed = new Set();
+  #pointerStart = null;
+  #jumpQueued = false;
 
   constructor(target) {
     this.target = target;
     this.#bindEvents();
   }
 
-  get direction() {
-    const direction = { x: 0, y: 0 };
+  consumeJump() {
+    const wantsJump =
+      this.#jumpQueued ||
+      this.#pressed.has('Space') ||
+      this.#pressed.has('ArrowUp') ||
+      this.#pressed.has('KeyW');
 
-    if (this.#keys.has('ArrowLeft') || this.#keys.has('KeyA')) direction.x -= 1;
-    if (this.#keys.has('ArrowRight') || this.#keys.has('KeyD')) direction.x += 1;
-    if (this.#keys.has('ArrowUp') || this.#keys.has('KeyW')) direction.y -= 1;
-    if (this.#keys.has('ArrowDown') || this.#keys.has('KeyS')) direction.y += 1;
+    this.#jumpQueued = false;
+    this.#pressed.delete('Space');
+    this.#pressed.delete('ArrowUp');
+    this.#pressed.delete('KeyW');
 
-    const length = Math.hypot(direction.x, direction.y) || 1;
-
-    return {
-      x: direction.x / length,
-      y: direction.y / length,
-    };
+    return wantsJump;
   }
 
-  get pointer() {
-    return this.#pointer;
+  consumePause() {
+    const wantsPause = this.#pressed.has('Escape') || this.#pressed.has('KeyP');
+
+    this.#pressed.delete('Escape');
+    this.#pressed.delete('KeyP');
+
+    return wantsPause;
+  }
+
+  resetTransient() {
+    this.#pressed.clear();
+    this.#jumpQueued = false;
   }
 
   #bindEvents() {
     window.addEventListener('keydown', (event) => {
+      if (['ArrowUp', 'ArrowDown', 'Space'].includes(event.code)) {
+        event.preventDefault();
+      }
+
+      if (!this.#keys.has(event.code)) {
+        this.#pressed.add(event.code);
+      }
+
       this.#keys.add(event.code);
     });
 
@@ -37,30 +56,34 @@ export class Input {
     });
 
     this.target.addEventListener('pointerdown', (event) => {
+      event.preventDefault();
       this.target.setPointerCapture(event.pointerId);
-      this.#pointer = this.#getPointerPosition(event);
+      this.#pointerStart = { x: event.clientX, y: event.clientY };
+      this.#jumpQueued = true;
     });
 
-    this.target.addEventListener('pointermove', (event) => {
-      if (!this.#pointer) return;
-      this.#pointer = this.#getPointerPosition(event);
+    this.target.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.#jumpQueued = true;
     });
 
-    this.target.addEventListener('pointerup', () => {
-      this.#pointer = null;
+    this.target.addEventListener('pointerup', (event) => {
+      event.preventDefault();
+      if (!this.#pointerStart) return;
+
+      const deltaY = event.clientY - this.#pointerStart.y;
+      const deltaX = event.clientX - this.#pointerStart.x;
+      const isSwipeUp = deltaY < -28 && Math.abs(deltaY) > Math.abs(deltaX);
+
+      if (isSwipeUp) {
+        this.#jumpQueued = true;
+      }
+
+      this.#pointerStart = null;
     });
 
     this.target.addEventListener('pointercancel', () => {
-      this.#pointer = null;
+      this.#pointerStart = null;
     });
-  }
-
-  #getPointerPosition(event) {
-    const rect = this.target.getBoundingClientRect();
-
-    return {
-      x: ((event.clientX - rect.left) / rect.width) * this.target.width,
-      y: ((event.clientY - rect.top) / rect.height) * this.target.height,
-    };
   }
 }

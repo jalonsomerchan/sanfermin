@@ -5,66 +5,162 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta
       name="description"
-      content="Template moderno para crear juegos HTML5 con JavaScript puro, Canvas, Vite y Tailwind CSS."
+      content="Endless runner móvil inspirado en San Fermín: corre delante de los toros y evita obstáculos."
     />
-    <meta name="theme-color" content="#09090b" />
+    <meta name="theme-color" content="#7f1d1d" />
 
-    <title>Game Template</title>
+    <title>San Fermín Run</title>
 
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   </head>
 
-  <body class="min-h-screen overflow-hidden bg-slate-950 text-white antialiased">
-    <div id="app" class="flex min-h-screen flex-col">
-      <header class="border-b border-white/10 bg-black/30 px-4 py-3 backdrop-blur-xl">
-        <div class="mx-auto flex max-w-6xl items-center justify-between gap-4">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
-              HTML5 Game
-            </p>
-            <h1 class="text-xl font-black tracking-tight sm:text-2xl">Game Template</h1>
-          </div>
+  <body class="min-h-screen overflow-hidden bg-stone-950 text-white antialiased">
+    <div id="app" class="flex min-h-screen items-center justify-center p-3">
+      <main
+        class="relative aspect-[9/16] max-h-[calc(100vh-1.5rem)] w-full max-w-[430px] overflow-hidden rounded-lg border border-white/15 bg-red-950 shadow-2xl shadow-black/45"
+        aria-label="San Fermín Run"
+      >
+        <canvas
+          id="game-canvas"
+          class="block h-full w-full touch-none bg-red-950"
+          width="540"
+          height="960"
+          aria-label="Juego endless runner de San Fermín"
+        ></canvas>
 
-          <div class="flex items-center gap-3 text-sm text-slate-300" aria-live="polite">
-            <span>Puntos: <strong id="score" class="text-white">0</strong></span>
-            <span> Mejor: <strong id="best-score" class="text-white">0</strong> </span>
-          </div>
-        </div>
-      </header>
-
-      <main class="relative flex flex-1 items-center justify-center p-3 sm:p-6">
-        <section
-          class="relative aspect-[9/16] max-h-[calc(100vh-7rem)] w-full max-w-[430px] overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900 shadow-2xl shadow-cyan-950/30"
+        <div
+          id="hud"
+          class="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3"
+          hidden
         >
-          <canvas
-            id="game-canvas"
-            class="block h-full w-full touch-none bg-slate-950"
-            width="540"
-            height="960"
-            aria-label="Demo jugable del template"
-          ></canvas>
-
-          <div
-            id="overlay"
-            class="absolute inset-0 flex items-center justify-center bg-black/60 p-6 backdrop-blur-sm"
+          <div class="rounded-md bg-black/55 px-3 py-2 text-sm font-black backdrop-blur">
+            <span data-i18n="time">Tiempo</span>
+            <span id="time" class="ml-1 tabular-nums">00:00.0</span>
+          </div>
+          <button
+            id="menu-button"
+            class="pointer-events-auto rounded-md bg-white/90 px-3 py-2 text-sm font-black text-red-950 shadow focus:outline-none focus:ring-4 focus:ring-red-200"
+            type="button"
+            data-i18n="menu"
           >
-            <div class="max-w-xs text-center">
-              <p class="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-300">Demo</p>
-              <h2 id="overlay-title" class="mt-3 text-3xl font-black">Recoge estrellas</h2>
-              <p id="overlay-message" class="mt-3 text-sm leading-relaxed text-slate-300">
-                Muévete con teclado, arrastrando o tocando. Recoge estrellas y evita salirte de la
-                zona.
-              </p>
+            Menú
+          </button>
+        </div>
+
+        <div
+          id="overlay"
+          class="absolute inset-0 flex items-center justify-center bg-red-950/78 p-5 backdrop-blur-sm"
+        >
+          <section id="start-panel" class="w-full max-w-[320px] text-center">
+            <p class="text-sm font-black uppercase tracking-[0.22em] text-amber-200">San Fermín</p>
+            <h1 data-title class="mt-2 text-4xl font-black leading-none">San Fermín Run</h1>
+            <p data-i18n="subtitle" class="mt-3 text-base font-semibold text-white/85">
+              Corre delante de los toros
+            </p>
+            <p data-i18n="startHint" class="mt-4 text-sm leading-relaxed text-white/75">
+              Toca o desliza hacia arriba para saltar. También puedes usar espacio o flecha arriba.
+            </p>
+
+            <div class="mt-6 grid grid-cols-2 gap-3 text-left">
+              <label class="block text-xs font-bold uppercase tracking-wide text-white/75">
+                <span data-i18n="language">Idioma</span>
+                <select
+                  id="language-select"
+                  class="mt-1 w-full rounded-md bg-white p-2 text-red-950"
+                >
+                  <option value="es">Español</option>
+                  <option value="en">English</option>
+                </select>
+              </label>
+              <label class="block text-xs font-bold uppercase tracking-wide text-white/75">
+                <span data-i18n="difficulty">Dificultad</span>
+                <select
+                  id="difficulty-select"
+                  class="mt-1 w-full rounded-md bg-white p-2 text-red-950"
+                >
+                  <option value="easy" data-i18n="easy">Suave</option>
+                  <option value="normal" data-i18n="normal" selected>Normal</option>
+                  <option value="hard" data-i18n="hard">Valiente</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="mt-6 flex gap-3">
               <button
                 id="play-button"
-                class="mt-6 rounded-full bg-cyan-300 px-6 py-3 font-black text-slate-950 transition hover:scale-105 focus:outline-none focus:ring-4 focus:ring-cyan-300/40"
+                class="min-h-12 flex-1 rounded-md bg-white px-5 font-black text-red-950 transition active:scale-95 focus:outline-none focus:ring-4 focus:ring-amber-200"
                 type="button"
+                data-i18n="play"
               >
                 Jugar
               </button>
+              <button
+                id="share-button"
+                class="min-h-12 flex-1 rounded-md bg-amber-300 px-5 font-black text-red-950 transition active:scale-95 focus:outline-none focus:ring-4 focus:ring-amber-100"
+                type="button"
+                data-i18n="share"
+              >
+                Compartir
+              </button>
             </div>
-          </div>
-        </section>
+            <p class="mt-5 text-sm font-bold text-white/80">
+              <span data-i18n="best">Mejor</span>
+              <span id="best-time" class="tabular-nums">00:00.0</span>
+            </p>
+          </section>
+
+          <section id="pause-panel" class="w-full max-w-[280px] text-center" hidden>
+            <h2 data-i18n="paused" class="text-3xl font-black">Pausa</h2>
+            <div class="mt-6 grid gap-3">
+              <button
+                id="continue-button"
+                class="min-h-12 rounded-md bg-white px-5 font-black text-red-950 focus:outline-none focus:ring-4 focus:ring-amber-200"
+                type="button"
+                data-i18n="continue"
+              >
+                Continuar
+              </button>
+              <button
+                class="restart-button min-h-12 rounded-md bg-amber-300 px-5 font-black text-red-950 focus:outline-none focus:ring-4 focus:ring-amber-100"
+                type="button"
+                data-i18n="restart"
+              >
+                Reiniciar
+              </button>
+              <button
+                id="home-button"
+                class="min-h-12 rounded-md bg-red-800 px-5 font-black text-white focus:outline-none focus:ring-4 focus:ring-red-300"
+                type="button"
+                data-i18n="home"
+              >
+                Inicio
+              </button>
+            </div>
+          </section>
+
+          <section id="game-over-panel" class="w-full max-w-[280px] text-center" hidden>
+            <h2 data-i18n="gameOverTitle" class="text-3xl font-black">¡Te han pillado!</h2>
+            <p data-i18n="gameOverMessage" class="mt-3 text-sm text-white/75">
+              Los toros alcanzaron al corredor.
+            </p>
+            <div class="mt-6 grid gap-3">
+              <button
+                class="restart-button min-h-12 rounded-md bg-white px-5 font-black text-red-950 focus:outline-none focus:ring-4 focus:ring-amber-200"
+                type="button"
+                data-i18n="restart"
+              >
+                Reiniciar
+              </button>
+              <button
+                class="home-button min-h-12 rounded-md bg-red-800 px-5 font-black text-white focus:outline-none focus:ring-4 focus:ring-red-300"
+                type="button"
+                data-i18n="home"
+              >
+                Inicio
+              </button>
+            </div>
+          </section>
+        </div>
       </main>
     </div>
 

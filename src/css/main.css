@@ -16,16 +16,22 @@ body {
 }
 
 html {
-  background: #020617;
+  background: #1c1917;
 }
 
 body {
   font-family: ui-sans-serif, system-ui, sans-serif;
   margin: 0;
   touch-action: manipulation;
+  user-select: none;
 }
 
 button,
+select,
 canvas {
   -webkit-tap-highlight-color: transparent;
+}
+
+canvas {
+  image-rendering: auto;
 }
