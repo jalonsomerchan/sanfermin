@@ -13,11 +13,13 @@ export const GAME_CONFIG = {
     x: 270,
     width: 118,
     height: 118,
+    fallWidth: 142,
+    fallHeight: 118,
     jumpVelocity: -920,
     stompBounceVelocity: -560,
     coyoteTime: 0.08,
     frameDuration: 0.08,
-    runFrames: [0, 1, 3, 1],
+    runFrames: [0, 1, 2, 3],
     collisionInset: {
       x: 20,
       y: 12,
@@ -32,7 +34,7 @@ export const GAME_CONFIG = {
     dodgeDuration: 0.42,
   },
   gameOver: {
-    caughtDuration: 1.25,
+    caughtDuration: 1.6,
     caughtSpeedRatio: 0.82,
     playerKnockbackX: -158,
     playerKnockbackY: 44,

@@ -1,6 +1,7 @@
 import backgroundSource from '../../assets/background_pamplona.png';
 import bullSource from '../../assets/sprites/bull-run/sheet-transparent.png';
 import obstacleSource from '../../assets/sprites/obstacles/sheet-transparent.png';
+import playerFallSource from '../../assets/sprites/player-fall/sheet-transparent.png';
 import playerJumpSource from '../../assets/sprites/player-jump/sheet-transparent.png';
 import playerRunSource from '../../assets/sprites/player-run/sheet-transparent.png';
 import runnerSource from '../../assets/sprites/runner-obstacle/sheet-transparent.png';
@@ -15,6 +16,7 @@ const ASSETS = {
   background: loadImage(backgroundSource),
   bull: loadImage(bullSource),
   obstacles: loadImage(obstacleSource),
+  playerFall: loadImage(playerFallSource),
   playerJump: loadImage(playerJumpSource),
   playerRun: loadImage(playerRunSource),
   runner: loadImage(runnerSource),
@@ -189,12 +191,13 @@ export class GameScene {
   }
 
   #renderPlayer(renderer) {
-    const playerX = this.isCaught
-      ? this.player.x + this.caughtProgress * GAME_CONFIG.gameOver.playerKnockbackX
-      : this.player.x;
-    const playerY = this.isCaught
-      ? this.player.y + this.caughtProgress * GAME_CONFIG.gameOver.playerKnockbackY
-      : this.player.y;
+    if (this.isCaught) {
+      this.#renderCaughtPlayer(renderer);
+      return;
+    }
+
+    const playerX = this.player.x;
+    const playerY = this.player.y;
 
     renderer.drawShadow({
       x: playerX + this.player.width / 2,
@@ -211,12 +214,44 @@ export class GameScene {
       height: this.player.height,
       frame: this.player.frame,
       frames: 4,
-      rotation: this.isCaught ? this.caughtProgress * 0.5 : 0,
-      alpha: this.isCaught ? 1 - this.caughtProgress * 0.25 : 1,
     });
 
     if (!didDraw) {
       renderer.drawFallbackRect({ ...this.player, color: '#f8fafc' });
+    }
+  }
+
+  #renderCaughtPlayer(renderer) {
+    const width = GAME_CONFIG.player.fallWidth;
+    const height = GAME_CONFIG.player.fallHeight;
+    const playerX =
+      this.player.x +
+      this.caughtProgress * GAME_CONFIG.gameOver.playerKnockbackX -
+      (width - this.player.width) * 0.5;
+    const playerY =
+      GAME_CONFIG.world.groundY -
+      height +
+      this.caughtProgress * GAME_CONFIG.gameOver.playerKnockbackY;
+    const frame = Math.min(3, Math.floor(this.caughtProgress * 4));
+
+    renderer.drawShadow({
+      x: playerX + width / 2,
+      y: GAME_CONFIG.world.groundY + 10,
+      width: 52,
+      alpha: 0.14,
+    });
+
+    const didDraw = renderer.drawSprite(ASSETS.playerFall, {
+      x: playerX,
+      y: playerY,
+      width,
+      height,
+      frame,
+      frames: 4,
+    });
+
+    if (!didDraw) {
+      renderer.drawFallbackRect({ x: playerX, y: playerY, width, height, color: '#f8fafc' });
     }
   }
 
