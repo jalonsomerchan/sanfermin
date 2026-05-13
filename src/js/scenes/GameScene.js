@@ -162,12 +162,24 @@ export class GameScene {
 
   #updateCaught(deltaTime) {
     this.caughtTimer += deltaTime;
+    this.distance += this.speed * GAME_CONFIG.gameOver.caughtSpeedRatio * deltaTime;
     this.bull.update(deltaTime * 1.8);
+    this.#updateCaughtObstacles(deltaTime);
 
     if (this.caughtTimer >= GAME_CONFIG.gameOver.caughtDuration) {
       this.isGameOver = true;
       this.onGameOver(this.elapsed);
     }
+  }
+
+  #updateCaughtObstacles(deltaTime) {
+    const caughtSpeed = this.speed * GAME_CONFIG.gameOver.caughtSpeedRatio;
+
+    for (const obstacle of this.obstacles) {
+      obstacle.update(deltaTime, caughtSpeed);
+    }
+
+    this.obstacles = this.obstacles.filter((obstacle) => !obstacle.isGone);
   }
 
   #intersects(a, b) {
@@ -209,9 +221,7 @@ export class GameScene {
   }
 
   #renderBull(renderer) {
-    const bullX = this.isCaught
-      ? this.bull.x + this.caughtProgress * GAME_CONFIG.gameOver.bullLungeX
-      : this.bull.x;
+    const bullX = this.bull.x;
 
     renderer.drawShadow({
       x: bullX + this.bull.width / 2,

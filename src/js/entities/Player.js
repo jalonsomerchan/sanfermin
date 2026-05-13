@@ -48,16 +48,16 @@ export class Player {
   }
 
   get frame() {
-    const frames = 4;
-    const duration = GAME_CONFIG.player.frameDuration;
-
     if (!this.isGrounded) {
       if (this.velocityY < -260) return 1;
       if (this.velocityY < 160) return 2;
       return 3;
     }
 
-    return Math.floor(this.animationTime / duration) % frames;
+    const runFrames = GAME_CONFIG.player.runFrames;
+    const frameIndex = Math.floor(this.animationTime / GAME_CONFIG.player.frameDuration);
+
+    return runFrames[frameIndex % runFrames.length];
   }
 
   get bounds() {
