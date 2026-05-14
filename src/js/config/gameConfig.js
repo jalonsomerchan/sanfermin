@@ -5,7 +5,7 @@ export const GAME_CONFIG = {
   },
   world: {
     groundY: 780,
-    gravity: 2100,
+    gravity: 1800,
     backgroundSpeedRatio: 1,
     lanePadding: 60,
   },
