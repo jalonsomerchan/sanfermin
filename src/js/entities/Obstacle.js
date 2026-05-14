@@ -33,10 +33,10 @@ export class Obstacle {
 
   get bounds() {
     const inset = this.type.collisionInset ?? {
-      x: 0.14,
-      y: 0.12,
-      width: 0.72,
-      height: 0.82,
+      x: 0.22,
+      y: 0.2,
+      width: 0.56,
+      height: 0.62,
     };
 
     return {
