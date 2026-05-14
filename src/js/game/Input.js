@@ -62,11 +62,6 @@ export class Input {
       this.#jumpQueued = true;
     });
 
-    this.target.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.#jumpQueued = true;
-    });
-
     this.target.addEventListener('pointerup', (event) => {
       event.preventDefault();
       if (!this.#pointerStart) return;

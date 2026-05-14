@@ -142,8 +142,12 @@ export class GameScene {
   #nextSpawnDelay() {
     const ramp = Math.min(0.56, this.elapsed * 0.006);
     const jitter = randomBetween(-0.12, 0.08);
+    const earlyBreathingRoom = Math.max(0, 1 - this.elapsed / 18) * 0.45;
 
-    return Math.max(this.difficulty.minSpawnDelay, this.difficulty.startSpawnDelay - ramp + jitter);
+    return Math.max(
+      this.difficulty.minSpawnDelay,
+      this.difficulty.startSpawnDelay + earlyBreathingRoom - ramp + jitter,
+    );
   }
 
   #checkCollisions() {

@@ -37,6 +37,10 @@
             <span data-i18n="time">Tiempo</span>
             <span id="time" class="ml-1 tabular-nums">00:00.0</span>
           </div>
+          <div class="rounded-md bg-black/55 px-3 py-2 text-sm font-black backdrop-blur">
+            <span data-i18n="record">Récord</span>
+            <span id="level-best-time" class="ml-1 tabular-nums">00:00.0</span>
+          </div>
           <button
             id="menu-button"
             class="pointer-events-auto rounded-md bg-white/90 px-3 py-2 text-sm font-black text-red-950 shadow focus:outline-none focus:ring-4 focus:ring-red-200"
@@ -61,7 +65,7 @@
               Toca o desliza hacia arriba para saltar. También puedes usar espacio o flecha arriba.
             </p>
 
-            <div class="mt-6 grid grid-cols-3 gap-3 text-left">
+            <div class="mt-6 text-left">
               <label class="block text-xs font-bold uppercase tracking-wide text-white/75">
                 <span data-i18n="language">Idioma</span>
                 <select
@@ -72,25 +76,16 @@
                   <option value="en">English</option>
                 </select>
               </label>
-              <label class="block text-xs font-bold uppercase tracking-wide text-white/75">
-                <span data-i18n="runner">Corredor</span>
-                <select id="runner-select" class="mt-1 w-full rounded-md bg-white p-2 text-red-950">
-                  <option value="male" data-i18n="maleRunner">Hombre</option>
-                  <option value="female" data-i18n="femaleRunner">Mujer</option>
-                </select>
-              </label>
-              <label class="block text-xs font-bold uppercase tracking-wide text-white/75">
-                <span data-i18n="difficulty">Dificultad</span>
-                <select
-                  id="difficulty-select"
-                  class="mt-1 w-full rounded-md bg-white p-2 text-red-950"
-                >
-                  <option value="easy" data-i18n="easy" selected>Suave</option>
-                  <option value="normal" data-i18n="normal">Normal</option>
-                  <option value="hard" data-i18n="hard">Valiente</option>
-                </select>
-              </label>
             </div>
+            <select id="runner-select" hidden tabindex="-1" aria-hidden="true">
+              <option value="male" data-i18n="maleRunner">Hombre</option>
+              <option value="female" data-i18n="femaleRunner">Mujer</option>
+            </select>
+            <select id="difficulty-select" hidden tabindex="-1" aria-hidden="true">
+              <option value="easy" data-i18n="easy" selected>Suave</option>
+              <option value="normal" data-i18n="normal">Normal</option>
+              <option value="hard" data-i18n="hard">Valiente</option>
+            </select>
 
             <div class="mt-6 flex gap-3">
               <button
@@ -111,9 +106,84 @@
               </button>
             </div>
             <p class="mt-5 text-sm font-bold text-white/80">
-              <span data-i18n="best">Mejor</span>
+              <span data-i18n="record">Récord</span>
               <span id="best-time" class="tabular-nums">00:00.0</span>
             </p>
+          </section>
+
+          <section id="runner-panel" class="w-full max-w-[320px] text-center" hidden>
+            <h2 data-i18n="chooseRunner" class="text-3xl font-black">Elige corredor</h2>
+            <div class="mt-6 grid grid-cols-2 gap-3">
+              <button
+                class="runner-choice min-h-44 rounded-md bg-white/95 p-3 text-red-950 shadow focus:outline-none focus:ring-4 focus:ring-amber-200"
+                type="button"
+                data-runner="male"
+              >
+                <img
+                  data-runner-preview="male"
+                  class="mx-auto h-24 w-24 object-contain [image-rendering:pixelated]"
+                  alt=""
+                />
+                <span data-i18n="maleRunner" class="mt-3 block font-black">Hombre</span>
+              </button>
+              <button
+                class="runner-choice min-h-44 rounded-md bg-white/95 p-3 text-red-950 shadow focus:outline-none focus:ring-4 focus:ring-amber-200"
+                type="button"
+                data-runner="female"
+              >
+                <img
+                  data-runner-preview="female"
+                  class="mx-auto h-24 w-24 object-contain [image-rendering:pixelated]"
+                  alt=""
+                />
+                <span data-i18n="femaleRunner" class="mt-3 block font-black">Mujer</span>
+              </button>
+            </div>
+            <button
+              class="home-button mt-5 min-h-12 w-full rounded-md bg-red-800 px-5 font-black text-white focus:outline-none focus:ring-4 focus:ring-red-300"
+              type="button"
+              data-i18n="home"
+            >
+              Inicio
+            </button>
+          </section>
+
+          <section id="difficulty-panel" class="w-full max-w-[320px] text-center" hidden>
+            <h2 data-i18n="chooseDifficulty" class="text-3xl font-black">Elige nivel</h2>
+            <div class="mt-6 grid gap-3">
+              <button
+                class="difficulty-choice min-h-12 rounded-md bg-white px-5 font-black text-red-950 focus:outline-none focus:ring-4 focus:ring-amber-200"
+                type="button"
+                data-difficulty="easy"
+                data-i18n="easy"
+              >
+                Suave
+              </button>
+              <button
+                class="difficulty-choice min-h-12 rounded-md bg-amber-300 px-5 font-black text-red-950 focus:outline-none focus:ring-4 focus:ring-amber-100"
+                type="button"
+                data-difficulty="normal"
+                data-i18n="normal"
+              >
+                Normal
+              </button>
+              <button
+                class="difficulty-choice min-h-12 rounded-md bg-red-800 px-5 font-black text-white focus:outline-none focus:ring-4 focus:ring-red-300"
+                type="button"
+                data-difficulty="hard"
+                data-i18n="hard"
+              >
+                Valiente
+              </button>
+            </div>
+            <button
+              id="runner-back-button"
+              class="mt-5 min-h-12 w-full rounded-md bg-white/15 px-5 font-black text-white focus:outline-none focus:ring-4 focus:ring-red-300"
+              type="button"
+              data-i18n="runner"
+            >
+              Corredor
+            </button>
           </section>
 
           <section id="pause-panel" class="w-full max-w-[280px] text-center" hidden>

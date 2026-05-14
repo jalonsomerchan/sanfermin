@@ -6,7 +6,7 @@ export class Obstacle {
     this.x = x;
     this.width = type.width;
     this.height = type.height;
-    this.y = GAME_CONFIG.world.groundY - this.height;
+    this.y = type.y ?? GAME_CONFIG.world.groundY - this.height;
     this.animationTime = Math.random() * 0.2;
     this.passed = false;
   }
@@ -19,7 +19,12 @@ export class Obstacle {
   get frame() {
     if (!this.type.animated) return this.type.frame;
 
-    return Math.floor(this.animationTime / GAME_CONFIG.obstacles.frameDuration) % 4;
+    const frameDuration =
+      this.type.sprite === 'bull'
+        ? GAME_CONFIG.obstacles.bullFrameDuration
+        : GAME_CONFIG.obstacles.frameDuration;
+
+    return Math.floor(this.animationTime / frameDuration) % 4;
   }
 
   get isGone() {
