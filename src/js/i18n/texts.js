@@ -25,7 +25,7 @@ export const TEXTS = {
     best: 'Mejor',
     gameOverTitle: '¡Te han pillado!',
     gameOverMessage: 'Los toros alcanzaron al corredor.',
-    startHint: 'Toca o desliza hacia arriba para saltar. Puedes hacer doble salto.',
+    startHint: 'El juego de los encierros de San Fermín.',
     paused: 'Pausa',
     shareText: 'Estoy corriendo el encierro en San Fermín Run. ¿Cuánto aguantas tú?',
   },
