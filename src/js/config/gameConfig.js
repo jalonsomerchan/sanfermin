@@ -79,7 +79,7 @@ export const GAME_CONFIG = {
       {
         id: 'fallenRunner',
         width: 152,
-        height: 64,
+        height: 84,
         frame: 3,
         stompable: false,
         points: 1,
