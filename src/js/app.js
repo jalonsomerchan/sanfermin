@@ -18,6 +18,7 @@ const game = new Game({
   menuButton: document.querySelector('#menu-button'),
   languageSelect: document.querySelector('#language-select'),
   difficultySelect: document.querySelector('#difficulty-select'),
+  runnerSelect: document.querySelector('#runner-select'),
   titleElements: document.querySelectorAll('[data-title]'),
 });
 

@@ -1,10 +1,10 @@
 import backgroundSource from '../../assets/background_pamplona.png';
 import bullSource from '../../assets/sprites/bull-run/sheet-transparent.png';
 import obstacleSource from '../../assets/sprites/obstacles/sheet-transparent.png';
-import playerFallSource from '../../assets/sprites/player-fall/sheet-transparent.png';
-import playerJumpSource from '../../assets/sprites/player-jump/sheet-transparent.png';
-import playerRunSource from '../../assets/sprites/player-run/sheet-transparent.png';
-import runnerSource from '../../assets/sprites/runner-obstacle/sheet-transparent.png';
+import femaleJumpSource from '../../assets/sprites/runner-female-jump/sheet-transparent.png';
+import femaleRunSource from '../../assets/sprites/runner-female-run/sheet-transparent.png';
+import maleJumpSource from '../../assets/sprites/runner-male-jump/sheet-transparent.png';
+import maleRunSource from '../../assets/sprites/runner-male-run/sheet-transparent.png';
 import { GAME_CONFIG } from '../config/gameConfig.js';
 import { Bull } from '../entities/Bull.js';
 import { Obstacle } from '../entities/Obstacle.js';
@@ -16,10 +16,16 @@ const ASSETS = {
   background: loadImage(backgroundSource),
   bull: loadImage(bullSource),
   obstacles: loadImage(obstacleSource),
-  playerFall: loadImage(playerFallSource),
-  playerJump: loadImage(playerJumpSource),
-  playerRun: loadImage(playerRunSource),
-  runner: loadImage(runnerSource),
+  runners: {
+    female: {
+      jump: loadImage(femaleJumpSource),
+      run: loadImage(femaleRunSource),
+    },
+    male: {
+      jump: loadImage(maleJumpSource),
+      run: loadImage(maleRunSource),
+    },
+  },
 };
 
 export class GameScene {
@@ -29,18 +35,19 @@ export class GameScene {
     this.onGameOver = onGameOver;
     this.player = new Player();
     this.bull = new Bull();
-    this.reset('normal');
+    this.reset('normal', GAME_CONFIG.player.defaultRunner);
   }
 
-  reset(difficultyId = 'normal') {
+  reset(difficultyId = 'normal', runnerId = GAME_CONFIG.player.defaultRunner) {
     this.difficulty = GAME_CONFIG.difficulty[difficultyId] ?? GAME_CONFIG.difficulty.normal;
     this.difficultyId = difficultyId;
+    this.runnerId = ASSETS.runners[runnerId] ? runnerId : GAME_CONFIG.player.defaultRunner;
     this.player.reset();
     this.bull.reset();
     this.obstacles = [];
     this.elapsed = 0;
     this.distance = 0;
-    this.spawnTimer = 1.1;
+    this.spawnTimer = this.difficulty.startSpawnDelay;
     this.isGameOver = false;
     this.isCaught = false;
     this.caughtTimer = 0;
@@ -122,11 +129,11 @@ export class GameScene {
 
   #chooseObstacleType() {
     const types = GAME_CONFIG.obstacles.types;
-    const pressure = Math.min(0.55, this.elapsed / 90);
-    const runnerChance = 0.08 + pressure * 0.28;
+    const pressure = Math.min(0.5, this.elapsed / 100);
+    const bullChance = 0.06 + pressure * 0.22;
 
-    if (Math.random() < runnerChance) {
-      return types.find((type) => type.id === 'runner');
+    if (Math.random() < bullChance) {
+      return types.find((type) => type.id === 'bull');
     }
 
     return types[Math.floor(Math.random() * (types.length - 1))];
@@ -206,7 +213,7 @@ export class GameScene {
       alpha: this.player.isGrounded ? 0.24 : 0.12,
     });
 
-    const image = this.player.isGrounded ? ASSETS.playerRun : ASSETS.playerJump;
+    const image = this.player.isGrounded ? this.playerAssets.run : this.playerAssets.jump;
     const didDraw = renderer.drawSprite(image, {
       x: playerX,
       y: playerY,
@@ -241,13 +248,14 @@ export class GameScene {
       alpha: 0.14,
     });
 
-    const didDraw = renderer.drawSprite(ASSETS.playerFall, {
+    const didDraw = renderer.drawSprite(this.playerAssets.jump, {
       x: playerX,
       y: playerY,
       width,
       height,
-      frame,
+      frame: Math.min(frame, 3),
       frames: 4,
+      rotation: this.caughtProgress * -0.32,
     });
 
     if (!didDraw) {
@@ -283,7 +291,7 @@ export class GameScene {
         alpha: 0.2,
       });
 
-      const image = obstacle.type.animated ? ASSETS.runner : ASSETS.obstacles;
+      const image = obstacle.type.sprite === 'bull' ? ASSETS.bull : ASSETS.obstacles;
       const didDraw = renderer.drawSprite(image, {
         x: obstacle.x,
         y: obstacle.y,
@@ -302,5 +310,9 @@ export class GameScene {
 
   get caughtProgress() {
     return Math.min(1, this.caughtTimer / GAME_CONFIG.gameOver.caughtDuration);
+  }
+
+  get playerAssets() {
+    return ASSETS.runners[this.runnerId] ?? ASSETS.runners[GAME_CONFIG.player.defaultRunner];
   }
 }

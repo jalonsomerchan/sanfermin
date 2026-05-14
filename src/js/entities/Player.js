@@ -13,6 +13,7 @@ export class Player {
     this.velocityY = 0;
     this.isGrounded = true;
     this.coyoteTimer = 0;
+    this.jumpsRemaining = GAME_CONFIG.player.maxJumps;
     this.animationTime = 0;
   }
 
@@ -23,10 +24,11 @@ export class Player {
       this.coyoteTimer -= deltaTime;
     }
 
-    if (input.consumeJump() && this.coyoteTimer > 0) {
+    if (input.consumeJump() && (this.coyoteTimer > 0 || this.jumpsRemaining > 0)) {
       this.velocityY = GAME_CONFIG.player.jumpVelocity;
       this.isGrounded = false;
       this.coyoteTimer = 0;
+      this.jumpsRemaining -= 1;
     }
 
     this.velocityY += GAME_CONFIG.world.gravity * deltaTime;
@@ -37,6 +39,7 @@ export class Player {
       this.y = floorY;
       this.velocityY = 0;
       this.isGrounded = true;
+      this.jumpsRemaining = GAME_CONFIG.player.maxJumps;
     }
 
     this.animationTime += deltaTime;
@@ -45,6 +48,7 @@ export class Player {
   bounce() {
     this.velocityY = GAME_CONFIG.player.stompBounceVelocity;
     this.isGrounded = false;
+    this.jumpsRemaining = Math.max(1, GAME_CONFIG.player.maxJumps - 1);
   }
 
   get frame() {

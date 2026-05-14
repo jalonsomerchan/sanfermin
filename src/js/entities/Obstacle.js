@@ -27,12 +27,19 @@ export class Obstacle {
   }
 
   get bounds() {
+    const inset = this.type.collisionInset ?? {
+      x: 0.14,
+      y: 0.12,
+      width: 0.72,
+      height: 0.82,
+    };
+
     return {
-      x: this.x + this.width * 0.14,
-      y: this.y + this.height * 0.12,
-      width: this.width * 0.72,
-      height: this.height * 0.82,
-      top: this.y + this.height * 0.12,
+      x: this.x + this.width * inset.x,
+      y: this.y + this.height * inset.y,
+      width: this.width * inset.width,
+      height: this.height * inset.height,
+      top: this.y + this.height * inset.y,
     };
   }
 }

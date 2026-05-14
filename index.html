@@ -61,7 +61,7 @@
               Toca o desliza hacia arriba para saltar. También puedes usar espacio o flecha arriba.
             </p>
 
-            <div class="mt-6 grid grid-cols-2 gap-3 text-left">
+            <div class="mt-6 grid grid-cols-3 gap-3 text-left">
               <label class="block text-xs font-bold uppercase tracking-wide text-white/75">
                 <span data-i18n="language">Idioma</span>
                 <select
@@ -73,13 +73,20 @@
                 </select>
               </label>
               <label class="block text-xs font-bold uppercase tracking-wide text-white/75">
+                <span data-i18n="runner">Corredor</span>
+                <select id="runner-select" class="mt-1 w-full rounded-md bg-white p-2 text-red-950">
+                  <option value="male" data-i18n="maleRunner">Hombre</option>
+                  <option value="female" data-i18n="femaleRunner">Mujer</option>
+                </select>
+              </label>
+              <label class="block text-xs font-bold uppercase tracking-wide text-white/75">
                 <span data-i18n="difficulty">Dificultad</span>
                 <select
                   id="difficulty-select"
                   class="mt-1 w-full rounded-md bg-white p-2 text-red-950"
                 >
-                  <option value="easy" data-i18n="easy">Suave</option>
-                  <option value="normal" data-i18n="normal" selected>Normal</option>
+                  <option value="easy" data-i18n="easy" selected>Suave</option>
+                  <option value="normal" data-i18n="normal">Normal</option>
                   <option value="hard" data-i18n="hard">Valiente</option>
                 </select>
               </label>

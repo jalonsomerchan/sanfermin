@@ -16,8 +16,12 @@ export class Game {
     this.renderer = new Renderer(elements.canvas, GAME_CONFIG.canvas);
     this.input = new Input(elements.canvas);
     this.language = readString(GAME_CONFIG.storage.languageKey, 'es');
+    this.runnerId = this.#normalizeRunnerId(
+      readString(GAME_CONFIG.storage.runnerKey, GAME_CONFIG.player.defaultRunner),
+    );
     this.bestTime = readNumber(GAME_CONFIG.storage.bestTimeKey);
     this.difficulty = elements.difficultySelect.value;
+    this.elements.runnerSelect.value = this.runnerId;
     this.scene = new GameScene({
       input: this.input,
       onTime: (seconds) => this.#setTime(seconds),
@@ -26,6 +30,7 @@ export class Game {
 
     this.#bindEvents();
     this.#applyLanguage();
+    this.scene.reset(this.difficulty, this.runnerId);
     this.#setTime(0);
     this.#setBestTime(this.bestTime);
     this.#showScreen('start');
@@ -35,7 +40,9 @@ export class Game {
   start() {
     this.stop();
     this.difficulty = this.elements.difficultySelect.value;
-    this.scene.reset(this.difficulty);
+    this.runnerId = this.#normalizeRunnerId(this.elements.runnerSelect.value);
+    writeString(GAME_CONFIG.storage.runnerKey, this.runnerId);
+    this.scene.reset(this.difficulty, this.runnerId);
     this.#showScreen('game');
     this.#isRunning = true;
     this.#lastTime = performance.now();
@@ -60,7 +67,7 @@ export class Game {
 
   goHome() {
     this.stop();
-    this.scene.reset(this.difficulty);
+    this.scene.reset(this.difficulty, this.runnerId);
     this.#setTime(0);
     this.#showScreen('start');
     this.scene.render(this.renderer);
@@ -108,6 +115,12 @@ export class Game {
       writeString(GAME_CONFIG.storage.languageKey, this.language);
       this.#applyLanguage();
     });
+    this.elements.runnerSelect.addEventListener('change', () => {
+      this.runnerId = this.#normalizeRunnerId(this.elements.runnerSelect.value);
+      writeString(GAME_CONFIG.storage.runnerKey, this.runnerId);
+      this.scene.reset(this.difficulty, this.runnerId);
+      this.scene.render(this.renderer);
+    });
     window.addEventListener('blur', () => this.pause());
   }
 
@@ -129,6 +142,12 @@ export class Game {
 
   #setBestTime(seconds) {
     this.elements.bestTimeElement.textContent = formatTime(seconds);
+  }
+
+  #normalizeRunnerId(runnerId) {
+    if (GAME_CONFIG.player.runnerIds.includes(runnerId)) return runnerId;
+
+    return GAME_CONFIG.player.defaultRunner;
   }
 
   #showScreen(screen) {
