@@ -1,8 +1,10 @@
 import backgroundSource from '../../assets/background_pamplona.png';
 import bullSource from '../../assets/sprites/bull-run/sheet-transparent.png';
 import obstacleSource from '../../assets/sprites/obstacles/sheet-transparent.png';
+import femaleFallSource from '../../assets/sprites/runner-female-fall/sheet-transparent.png';
 import femaleJumpSource from '../../assets/sprites/runner-female-jump/sheet-transparent.png';
 import femaleRunSource from '../../assets/sprites/runner-female-run/sheet-transparent.png';
+import maleFallSource from '../../assets/sprites/runner-male-fall/sheet-transparent.png';
 import maleJumpSource from '../../assets/sprites/runner-male-jump/sheet-transparent.png';
 import maleRunSource from '../../assets/sprites/runner-male-run/sheet-transparent.png';
 import { GAME_CONFIG } from '../config/gameConfig.js';
@@ -18,10 +20,12 @@ const ASSETS = {
   obstacles: loadImage(obstacleSource),
   runners: {
     female: {
+      fall: loadImage(femaleFallSource),
       jump: loadImage(femaleJumpSource),
       run: loadImage(femaleRunSource),
     },
     male: {
+      fall: loadImage(maleFallSource),
       jump: loadImage(maleJumpSource),
       run: loadImage(maleRunSource),
     },
@@ -86,6 +90,7 @@ export class GameScene {
       this.distance,
       GAME_CONFIG.world.backgroundSpeedRatio,
     );
+    renderer.drawRunwayContrast(GAME_CONFIG.world.groundY);
     renderer.drawGround(GAME_CONFIG.world.groundY);
 
     this.#renderBull(renderer);
@@ -218,13 +223,16 @@ export class GameScene {
     });
 
     const image = this.player.isGrounded ? this.playerAssets.run : this.playerAssets.jump;
+    const frames = this.player.isGrounded
+      ? GAME_CONFIG.player.runFrames.length
+      : GAME_CONFIG.player.jumpFrames;
     const didDraw = renderer.drawSprite(image, {
       x: playerX,
       y: playerY,
       width: this.player.width,
       height: this.player.height,
       frame: this.player.frame,
-      frames: 4,
+      frames,
     });
 
     if (!didDraw) {
@@ -233,8 +241,10 @@ export class GameScene {
   }
 
   #renderCaughtPlayer(renderer) {
-    const width = GAME_CONFIG.player.fallWidth;
+    const width =
+      this.player.width + (GAME_CONFIG.player.fallWidth - this.player.width) * this.caughtProgress;
     const height = GAME_CONFIG.player.fallHeight;
+    const tripLift = Math.sin(this.caughtProgress * Math.PI) * GAME_CONFIG.gameOver.playerTripLiftY;
     const playerX =
       this.player.x +
       this.caughtProgress * GAME_CONFIG.gameOver.playerKnockbackX -
@@ -242,24 +252,28 @@ export class GameScene {
     const playerY =
       GAME_CONFIG.world.groundY -
       height +
-      this.caughtProgress * GAME_CONFIG.gameOver.playerKnockbackY;
-    const frame = Math.min(3, Math.floor(this.caughtProgress * 4));
+      this.caughtProgress * GAME_CONFIG.gameOver.playerKnockbackY -
+      tripLift;
+    const frame = Math.min(
+      GAME_CONFIG.player.fallFrames - 1,
+      Math.floor(this.caughtTimer / GAME_CONFIG.player.fallFrameDuration),
+    );
 
     renderer.drawShadow({
       x: playerX + width / 2,
       y: GAME_CONFIG.world.groundY + 10,
-      width: 52,
-      alpha: 0.14,
+      width: 46 + this.caughtProgress * 18,
+      alpha: 0.12 + this.caughtProgress * 0.06,
     });
 
-    const didDraw = renderer.drawSprite(this.playerAssets.jump, {
+    const didDraw = renderer.drawSprite(this.playerAssets.fall, {
       x: playerX,
       y: playerY,
       width,
       height,
-      frame: Math.min(frame, 3),
-      frames: 4,
-      rotation: this.caughtProgress * -0.32,
+      frame,
+      frames: GAME_CONFIG.player.fallFrames,
+      rotation: this.caughtProgress * -0.1,
     });
 
     if (!didDraw) {
@@ -291,8 +305,8 @@ export class GameScene {
       renderer.drawShadow({
         x: obstacle.x + obstacle.width / 2,
         y: GAME_CONFIG.world.groundY + 9,
-        width: obstacle.width * 0.38,
-        alpha: 0.2,
+        width: obstacle.width * (obstacle.type.shadowScale ?? 0.48),
+        alpha: obstacle.type.shadowAlpha ?? 0.28,
       });
 
       const image = obstacle.type.sprite === 'bull' ? ASSETS.bull : ASSETS.obstacles;

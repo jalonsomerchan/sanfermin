@@ -49,6 +49,23 @@ export class Renderer {
     ctx.restore();
   }
 
+  drawRunwayContrast(groundY) {
+    const ctx = this.context;
+    const startY = groundY - 170;
+    const gradient = ctx.createLinearGradient(0, startY, 0, groundY + 20);
+
+    ctx.save();
+    gradient.addColorStop(0, 'rgba(44, 24, 18, 0)');
+    gradient.addColorStop(0.55, 'rgba(44, 24, 18, 0.22)');
+    gradient.addColorStop(1, 'rgba(44, 24, 18, 0.38)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, startY, this.width, groundY - startY + 20);
+
+    ctx.fillStyle = 'rgba(255, 244, 214, 0.3)';
+    ctx.fillRect(0, groundY - 4, this.width, 3);
+    ctx.restore();
+  }
+
   drawSprite(
     image,
     { x, y, width, height, frame = 0, frames = 1, rows = 1, alpha = 1, rotation = 0 },

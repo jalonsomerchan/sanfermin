@@ -1,0 +1,103 @@
+{
+  "target": "player",
+  "mode": "death",
+  "prompt": "Female San Fermin runner six-frame trip and fall sequence, clean HD side-view sprite, solid #FF00FF background.",
+  "role": "",
+  "input": "/Users/jorgealonso/.codex/generated_images/019ecefc-70cc-7be3-86eb-78aec6d9aa29/ig_0badbf793377f68b016a30e545cc908191b1b6e207c8ec6b0c.png",
+  "threshold": 100,
+  "edge_threshold": 150,
+  "duration": 95,
+  "rows": 1,
+  "cols": 6,
+  "cell_size": 128,
+  "fit_scale": 0.92,
+  "trim_border": 4,
+  "edge_clean_depth": 3,
+  "align": "center",
+  "shared_scale": true,
+  "component_mode": "largest",
+  "component_padding": 4,
+  "min_component_area": 1,
+  "edge_touch_margin": 0,
+  "frame_labels": ["fall-1", "fall-2", "fall-3", "fall-4", "fall-5", "fall-6"],
+  "frames": [
+    {
+      "grid": [0, 0],
+      "source_box": [0, 0, 362, 724],
+      "component_mode": "largest",
+      "component_count": 10,
+      "selected_component_area": 42400,
+      "selected_component_bbox": [25, 171, 316, 518],
+      "crop_bbox": [21, 167, 320, 522],
+      "edge_touch": false,
+      "output_size": [99, 117],
+      "paste_position": [14, 5]
+    },
+    {
+      "grid": [0, 1],
+      "source_box": [362, 0, 724, 724],
+      "component_mode": "largest",
+      "component_count": 2,
+      "selected_component_area": 38569,
+      "selected_component_bbox": [0, 212, 330, 505],
+      "crop_bbox": [0, 208, 334, 509],
+      "edge_touch": true,
+      "output_size": [110, 99],
+      "paste_position": [9, 14]
+    },
+    {
+      "grid": [0, 2],
+      "source_box": [724, 0, 1086, 724],
+      "component_mode": "largest",
+      "component_count": 14,
+      "selected_component_area": 33678,
+      "selected_component_bbox": [0, 241, 280, 511],
+      "crop_bbox": [0, 237, 284, 515],
+      "edge_touch": true,
+      "output_size": [94, 92],
+      "paste_position": [17, 18]
+    },
+    {
+      "grid": [0, 3],
+      "source_box": [1086, 0, 1448, 724],
+      "component_mode": "largest",
+      "component_count": 13,
+      "selected_component_area": 31509,
+      "selected_component_bbox": [0, 358, 296, 519],
+      "crop_bbox": [0, 354, 300, 523],
+      "edge_touch": true,
+      "output_size": [99, 56],
+      "paste_position": [14, 36]
+    },
+    {
+      "grid": [0, 4],
+      "source_box": [1448, 0, 1810, 724],
+      "component_mode": "largest",
+      "component_count": 3,
+      "selected_component_area": 28211,
+      "selected_component_bbox": [0, 367, 344, 528],
+      "crop_bbox": [0, 363, 348, 532],
+      "edge_touch": true,
+      "output_size": [115, 56],
+      "paste_position": [6, 36]
+    },
+    {
+      "grid": [0, 5],
+      "source_box": [1810, 0, 2172, 724],
+      "component_mode": "largest",
+      "component_count": 30,
+      "selected_component_area": 20159,
+      "selected_component_bbox": [5, 423, 333, 529],
+      "crop_bbox": [1, 419, 337, 533],
+      "edge_touch": false,
+      "output_size": [111, 37],
+      "paste_position": [8, 45]
+    }
+  ],
+  "edge_touch_frames": [
+    [0, 1],
+    [0, 2],
+    [0, 3],
+    [0, 4]
+  ]
+}

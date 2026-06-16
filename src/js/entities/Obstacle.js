@@ -6,7 +6,7 @@ export class Obstacle {
     this.x = x;
     this.width = type.width;
     this.height = type.height;
-    this.y = type.y ?? GAME_CONFIG.world.groundY - this.height;
+    this.y = type.y ?? GAME_CONFIG.world.groundY - this.height + (type.groundOffset ?? 0);
     this.animationTime = Math.random() * 0.2;
     this.passed = false;
   }
