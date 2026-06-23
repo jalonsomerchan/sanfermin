@@ -16,6 +16,13 @@ https://usuario.github.io/nombre-repo/
 
 Vite permite configurar la base pública del build en `vite.config.js`.
 
+Este proyecto usa rutas relativas para que el mismo artefacto funcione en raíz
+con dominio propio y en subruta de GitHub Pages:
+
+```js
+base: './';
+```
+
 Para raíz:
 
 ```js
